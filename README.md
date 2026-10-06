@@ -1,7 +1,7 @@
 # Lumen
 
-A start page for your PC, with your games, a built-in browser and an AI companion.
+A free start page app for Windows: your games, a built-in browser with an ad blocker, an AI companion and widgets.
 
-**Download:** open [Releases](https://github.com/olik0495/lumen/releases/latest) and get `Lumen-Browser-<version>.zip` (with the built-in browser) or `Lumen-<version>.zip`. Unzip it and open `Lumen.exe`.
+## ➜ [Download Lumen and see how to install it](https://olik0495.github.io/lumen/)
 
-Lumen updates itself after that.
+(The downloads themselves are listed under [Releases](https://github.com/olik0495/lumen/releases/latest). Lumen updates itself after you've installed it once.)
