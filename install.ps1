@@ -41,10 +41,10 @@
     else {
       Say ("Downloading Lumen $version (" + [math]::Round($asset.size / 1MB) + ' MB)...')
       Invoke-WebRequest $asset.browser_download_url -OutFile $zip -UseBasicParsing
-      if ($digest -like 'sha256:*') {
-        $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
-        if (('sha256:' + $hash) -ne $digest.ToLower()) { throw 'The download was damaged. Please run the installer again.' }
-      }
+      # (no checksum from GitHub = nothing to check the download against: better not to install it)
+      if ($digest -notlike 'sha256:*') { throw 'GitHub did not confirm the download. Please try again later.' }
+      $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+      if (('sha256:' + $hash) -ne $digest.ToLower()) { throw 'The download was damaged. Please run the installer again.' }
     }
 
     # 3. Unpack (Windows' own tar, run inside the folder so unusual user names don't trip it up).
