@@ -94,6 +94,17 @@
   code { font-family: 'Cascadia Code', Consolas, monospace; font-size: .92em; background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 6px; }
   .note { border-left: 3px solid var(--accent-2); }
 
+  /* The one-step installer: a command to paste into Windows' Run box */
+  .install { width: min(760px, 100%); text-align: left; border-radius: 20px; border: 1px solid var(--line); background: var(--card); padding: 20px 22px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .install h3 { font-size: 18px; margin-bottom: 4px; }
+  .install ol { color: var(--muted); padding-left: 20px; margin: 6px 0 12px; font-size: 15.5px; }
+  .install ol b { color: var(--text); }
+  .cmd { display: flex; gap: 10px; align-items: stretch; }
+  .cmd code { flex: 1; min-width: 0; display: block; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,.35); border: 1px solid var(--line); font-size: 13.5px; overflow-x: auto; white-space: nowrap; }
+  .cmd .btn { flex: none; }
+  kbd { font-family: inherit; font-size: .9em; font-weight: 600; color: var(--text); padding: 1px 7px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255,255,255,.08); }
+  @media (max-width: 560px) { .cmd { flex-direction: column; } }
+
   .faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; }
   details { border-radius: 16px; border: 1px solid var(--line); background: var(--card); padding: 4px 20px; }
   summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
@@ -129,11 +140,15 @@
     <h1>Your start page for <span>gaming, browsing</span> and everything in between</h1>
     <p class="lede">Lumen opens with your PC and puts your games, favourite sites, a built-in browser with an ad blocker, and an AI companion called Lumi in one good-looking place.</p>
     <div class="cta" id="download">
-      <a class="btn primary big" href="https://github.com/olik0495/lumen/releases/latest" data-dl="browser">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>
-        <span id="dlLabel">Download Lumen</span>
-      </a>
-      <small><span id="dlSize">A zip file of about 150 MB</span> · Prefer your own browser? <a href="https://github.com/olik0495/lumen/releases/latest" data-dl="plain">Get Lumen without the built-in browser</a></small>
+      <div class="install">
+        <h3>Install Lumen in one step</h3>
+        <ol>
+          <li>Press <kbd>Win</kbd> + <kbd>R</kbd> on your keyboard.</li>
+          <li>Paste this line and press <kbd>Enter</kbd>. Lumen downloads, installs itself and opens.</li>
+        </ol>
+        <div class="cmd"><code id="installCmd">powershell -ExecutionPolicy Bypass -c "irm https://olik0495.github.io/lumen/install.ps1 | iex"</code><button class="btn primary" type="button" id="copyCmd">Copy</button></div>
+      </div>
+      <small>Prefer a zip file? <a href="https://github.com/olik0495/lumen/releases/latest" data-dl="browser"><span id="dlLabel">Download Lumen</span></a> (<span id="dlSize">about 150 MB</span>) · or <a href="https://github.com/olik0495/lumen/releases/latest" data-dl="plain">without the built-in browser</a></small>
     </div>
     <div class="shot"><img src="assets/lumen-dark.jpg" alt="Lumen's start page: a clock, a search box, link tiles for YouTube, Gmail, Spotify, Discord and more, and weather and to-do widgets on a purple glowing background" width="1440" height="900"></div>
   </div>
@@ -175,11 +190,10 @@
       <h2>How to install</h2>
       <p class="sub">It takes about a minute, and there's nothing to set up.</p>
       <div class="steps">
-        <div class="step"><div><h3>Download Lumen</h3><p>Click <b>Download Lumen</b> at the top of this page. You get a zip file of about 150 MB.</p></div></div>
-        <div class="step"><div><h3>Unzip it</h3><p>Right-click the zip and choose <b>Extract All…</b>, then <b>Extract</b>. Put the folder wherever you like, for example in <code>Documents</code>. Don't open Lumen from inside the zip.</p></div></div>
-        <div class="step"><div><h3>Open Lumen</h3><p>In the folder, double-click <b>Lumen.exe</b>. Lumen asks if you'd like a shortcut on your desktop, and it starts with Windows from then on (you can turn that off in Settings).</p></div></div>
-        <div class="step note"><div><h3>If Windows says "Windows protected your PC"</h3><p>That's because Lumen is made by one person and isn't registered with Microsoft. Click <b>More info</b>, then <b>Run anyway</b>. You only see this the first time.</p></div></div>
-        <div class="step note"><div><h3>If Windows blocks it completely</h3><p>Your PC has <b>Smart App Control</b> turned on. Open the <code>app</code> folder inside the Lumen folder and start <b>Lumen.exe</b> from there instead.</p></div></div>
+        <div class="step"><div><h3>Copy the install line</h3><p>Click <b>Copy</b> in the box at the top of this page.</p></div></div>
+        <div class="step"><div><h3>Paste it into Run</h3><p>Press <b>Win + R</b> (the Windows key and R together), paste the line with <b>Ctrl + V</b>, and press <b>Enter</b>.</p></div></div>
+        <div class="step"><div><h3>That's it</h3><p>A small window shows the progress. Lumen gets a Start menu entry and a desktop shortcut, opens by itself, and starts with Windows from then on (you can turn that off in Settings). No "Windows protected your PC" warning.</p></div></div>
+        <div class="step note"><div><h3>Or use the zip file</h3><p>Download the zip, right-click it, choose <b>Extract All…</b>, and open <b>Lumen.exe</b> in the folder. If Windows says "Windows protected your PC", click <b>More info</b>, then <b>Run anyway</b>. If it blocks Lumen completely (Smart App Control), start <b>Lumen.exe</b> from the <code>app</code> folder instead.</p></div></div>
       </div>
     </div>
   </section>
@@ -195,7 +209,9 @@
         <details><summary>Do I need to pay for the AI?</summary><p>No. You can connect an account you already have (ChatGPT, Claude, Gemini, Groq and more), or use LM Studio or Ollama to run a free AI on your own PC. Lumen works fine without any AI too.</p></details>
         <details><summary>How do updates work?</summary><p>Lumen checks for new versions by itself. When one is ready, Lumi asks if you want to update now; one click and Lumen restarts on the new version. You can also check in <b>Settings → General → Updates</b>.</p></details>
         <details><summary>Will it slow down my games?</summary><p>No. Lumen pauses its animations while it's in the background, and you can choose a lighter graphics mode in <b>Settings → Look</b> for older PCs.</p></details>
-        <details><summary>How do I uninstall it?</summary><p>In Lumen, turn off <b>Settings → General → Start with Windows</b>, close Lumen, and delete the Lumen folder. To also remove your settings, delete <code>%APPDATA%\Lumen</code>.</p></details>
+        <details><summary>How do I uninstall it?</summary><p>Installed with the install line: open Windows <b>Settings → Apps</b>, find <b>Lumen</b> and click <b>Uninstall</b>. It asks whether to keep your settings. Using the zip: turn off <b>Settings → General → Start with Windows</b> in Lumen, close it, and delete the Lumen folder (your settings are in <code>%APPDATA%\Lumen</code>).</p></details>
+        <details><summary>Is the install line safe?</summary><p>It's a small script on this website that downloads the newest Lumen from Lumen's own GitHub page, checks the download isn't damaged, and installs it in your user folder. It doesn't need administrator rights. You can <a href="install.ps1">read the script</a> before you run it.</p></details>
+        <details><summary>I want Lumen without the built-in browser</summary><p>Use this install line instead: <code>powershell -ExecutionPolicy Bypass -c "$env:LUMEN_EDITION='plain'; irm https://olik0495.github.io/lumen/install.ps1 | iex"</code></p></details>
       </div>
     </div>
   </section>
@@ -219,6 +235,13 @@
 </footer>
 
 <script>
+  // Copy the install line.
+  document.getElementById('copyCmd').addEventListener('click', async e => {
+    const text = document.getElementById('installCmd').textContent;
+    try { await navigator.clipboard.writeText(text); e.target.textContent = 'Copied!'; }
+    catch { const r = document.createRange(); r.selectNodeContents(document.getElementById('installCmd')); getSelection().removeAllRanges(); getSelection().addRange(r); e.target.textContent = 'Press Ctrl+C'; }
+    setTimeout(() => { e.target.textContent = 'Copy'; }, 2000);
+  });
   // The download buttons always point at the newest version (asked from GitHub; if that fails they open the
   // releases page, where the zips are listed).
   (async () => {
@@ -235,7 +258,7 @@
         document.getElementById('footVer').textContent = version;
         document.getElementById('dlLabel').textContent = 'Download Lumen ' + version;
       }
-      if (zips.browser) document.getElementById('dlSize').textContent = `A zip file of ${Math.round(zips.browser.size / 1048576)} MB`;
+      if (zips.browser) document.getElementById('dlSize').textContent = `${Math.round(zips.browser.size / 1048576)} MB`;
       // What's new: the list at the top of the release notes.
       const notes = String(rel.body || '').split(/\r?\n/).filter(l => /^\s*[-*] /.test(l)).map(l => l.replace(/^\s*[-*] /, '').replace(/\*\*/g, ''));
       if (notes.length) {
