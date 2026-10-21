@@ -3,125 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Only this site's own files run here, and the page only talks to GitHub (for the newest version) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Lumen – your start page for gaming and everything else</title>
 <meta name="description" content="Lumen is a free start page app for Windows: your games, a built-in browser with an ad blocker, an AI companion, widgets and themes. Download it here.">
 <link rel="icon" href="assets/favicon.ico">
 <meta property="og:title" content="Lumen">
 <meta property="og:description" content="Your games, a built-in browser with an ad blocker, an AI companion and widgets, in one beautiful start page for Windows.">
 <meta property="og:image" content="assets/lumen-dark.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0b0b1e; --text: #f3f2ff; --muted: #a9a7c9; --line: rgba(255,255,255,.1); --card: rgba(255,255,255,.055);
-    --card-hi: rgba(255,255,255,.09); --accent: #8b5cf6; --accent-2: #06b6d4; --pink: #ec4899; --on-accent: #fff;
-    --shadow: 0 30px 80px -30px rgba(0,0,0,.7);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: Inter, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-  a { color: inherit; }
-  img { display: block; max-width: 100%; }
-
-  /* The same glowing background as Lumen itself */
-  .glow { position: fixed; inset: -10vmax; z-index: -1; pointer-events: none; }
-  .glow i { position: absolute; border-radius: 50%; width: 55vmax; height: 55vmax; opacity: .38; filter: blur(10px);
-    -webkit-mask-image: radial-gradient(circle, #000, transparent 68%); mask-image: radial-gradient(circle, #000, transparent 68%); animation: drift 28s ease-in-out infinite alternate; }
-  .glow i:nth-child(1) { background: #7c3aed; top: -12vmax; left: -10vmax; }
-  .glow i:nth-child(2) { background: var(--accent-2); bottom: -20vmax; right: -12vmax; animation-duration: 34s; }
-  .glow i:nth-child(3) { background: var(--pink); top: 30%; left: 40%; width: 40vmax; height: 40vmax; opacity: .22; animation-duration: 24s; }
-  @keyframes drift { to { transform: translate(8vw, 6vh) scale(1.1); } }
-  @media (prefers-reduced-motion: reduce) { .glow i { animation: none; } html { scroll-behavior: auto; } }
-
-  .wrap { width: min(1120px, 100% - 32px); margin: 0 auto; }
-  header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
-    background: rgba(11,11,30,.55); border-bottom: 1px solid var(--line); }
-  header .wrap { display: flex; align-items: center; gap: 24px; height: 64px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; }
-  .brand img { width: 30px; height: 30px; border-radius: 8px; }
-  nav { display: flex; gap: 22px; margin-left: auto; font-size: 14.5px; color: var(--muted); }
-  nav a { text-decoration: none; transition: color .2s; }
-  nav a:hover { color: var(--text); }
-  @media (max-width: 640px) { nav { display: none; } header .btn { margin-left: auto; } }
-
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 14px; cursor: pointer; font: inherit; font-weight: 600;
-    text-decoration: none; background: var(--card-hi); color: var(--text); padding: 10px 18px; font-size: 15px; transition: transform .25s, box-shadow .25s, background .25s; }
-  .btn:hover { transform: translateY(-2px); }
-  .btn.primary { background: linear-gradient(135deg, var(--accent), #6d28d9); color: var(--on-accent); box-shadow: 0 14px 34px -12px rgba(139,92,246,.75); }
-  .btn.big { padding: 17px 30px; font-size: 18px; border-radius: 18px; }
-  .btn svg { width: 20px; height: 20px; flex: none; }
-
-  .hero { text-align: center; padding: 84px 0 40px; }
-  .pill { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--card);
-    font-size: 13.5px; color: var(--muted); margin-bottom: 26px; }
-  .pill b { color: var(--text); font-weight: 600; }
-  h1 { font-size: clamp(38px, 6.4vw, 72px); line-height: 1.05; letter-spacing: -.035em; font-weight: 800; max-width: 900px; margin: 0 auto; }
-  h1 span { background: linear-gradient(90deg, #c4b5fd, #67e8f9 55%, #f9a8d4); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .lede { font-size: clamp(17px, 2.1vw, 20px); color: var(--muted); max-width: 640px; margin: 22px auto 34px; }
-  .cta { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .cta small { color: var(--muted); font-size: 14px; }
-  .cta small a { color: var(--text); }
-
-  .shot { margin: 56px auto 0; border-radius: 22px; padding: 10px; background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.03)); box-shadow: var(--shadow); max-width: 1060px; }
-  .shot img { border-radius: 14px; width: 100%; height: auto; aspect-ratio: 1440 / 900; }
-
-  section { padding: 90px 0 10px; }
-  h2 { font-size: clamp(28px, 3.6vw, 40px); letter-spacing: -.025em; line-height: 1.15; text-align: center; }
-  .sub { color: var(--muted); text-align: center; max-width: 620px; margin: 12px auto 42px; font-size: 17px; }
-
-  .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-  .card { border-radius: 20px; border: 1px solid var(--line); background: var(--card); padding: 24px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-  .card .ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; margin-bottom: 16px;
-    background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(6,182,212,.25)); }
-  .card .ico svg { width: 22px; height: 22px; }
-  .card h3 { font-size: 17.5px; margin-bottom: 6px; letter-spacing: -.01em; }
-  .card p { color: var(--muted); font-size: 15px; }
-
-  .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .gallery figure { border-radius: 18px; padding: 8px; background: var(--card); border: 1px solid var(--line); }
-  .gallery img { border-radius: 12px; width: 100%; height: auto; aspect-ratio: 1440 / 900; }
-  .gallery figcaption { color: var(--muted); font-size: 14px; padding: 10px 6px 4px; }
-  @media (max-width: 760px) { .gallery { grid-template-columns: 1fr; } }
-
-  .steps { counter-reset: step; display: grid; gap: 14px; max-width: 820px; margin: 0 auto; }
-  .step { counter-increment: step; display: grid; grid-template-columns: 52px 1fr; gap: 18px; align-items: start; border-radius: 18px; border: 1px solid var(--line); background: var(--card); padding: 20px 22px; }
-  .step::before { content: counter(step); width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; font-size: 17px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
-  .step h3 { font-size: 17px; margin-bottom: 4px; }
-  .step p { color: var(--muted); font-size: 15.5px; }
-  .step p b, .step p code { color: var(--text); }
-  code { font-family: 'Cascadia Code', Consolas, monospace; font-size: .92em; background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 6px; }
-  .note { border-left: 3px solid var(--accent-2); }
-
-  /* The one-step installer: a command to paste into Windows' Run box */
-  .install { width: min(760px, 100%); text-align: left; border-radius: 20px; border: 1px solid var(--line); background: var(--card); padding: 20px 22px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-  .install h3 { font-size: 18px; margin-bottom: 4px; }
-  .install ol { color: var(--muted); padding-left: 20px; margin: 6px 0 12px; font-size: 15.5px; }
-  .install ol b { color: var(--text); }
-  .cmd { display: flex; gap: 10px; align-items: stretch; }
-  .cmd code { flex: 1; min-width: 0; display: block; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,.35); border: 1px solid var(--line); font-size: 13.5px; overflow-x: auto; white-space: nowrap; }
-  .cmd .btn { flex: none; }
-  kbd { font-family: inherit; font-size: .9em; font-weight: 600; color: var(--text); padding: 1px 7px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255,255,255,.08); }
-  @media (max-width: 560px) { .cmd { flex-direction: column; } }
-
-  .faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; }
-  details { border-radius: 16px; border: 1px solid var(--line); background: var(--card); padding: 4px 20px; }
-  summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; color: var(--muted); font-size: 22px; line-height: 1; transition: transform .25s; }
-  details[open] summary::after { transform: rotate(45deg); }
-  details p, details ul { color: var(--muted); padding-bottom: 16px; font-size: 15.5px; }
-  details ul { padding-left: 20px; }
-
-  .final { text-align: center; padding: 100px 0 40px; }
-  .whatsnew { max-width: 620px; margin: 0 auto 30px; text-align: left; border-radius: 18px; border: 1px solid var(--line); background: var(--card); padding: 18px 22px; display: none; }
-  .whatsnew h3 { font-size: 15px; margin-bottom: 6px; }
-  .whatsnew ul { color: var(--muted); padding-left: 20px; font-size: 15px; }
-  footer { border-top: 1px solid var(--line); margin-top: 60px; padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
-  :focus-visible { outline: 2px solid #c4b5fd; outline-offset: 3px; border-radius: 8px; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -240,41 +131,6 @@
   </div>
 </footer>
 
-<script>
-  // Copy the install line.
-  document.getElementById('copyCmd').addEventListener('click', async e => {
-    const text = document.getElementById('installCmd').textContent;
-    try { await navigator.clipboard.writeText(text); e.target.textContent = 'Copied!'; }
-    catch { const r = document.createRange(); r.selectNodeContents(document.getElementById('installCmd')); getSelection().removeAllRanges(); getSelection().addRange(r); e.target.textContent = 'Press Ctrl+C'; }
-    setTimeout(() => { e.target.textContent = 'Copy'; }, 2000);
-  });
-  // The download buttons always point at the newest version (asked from GitHub; if that fails they open the
-  // releases page, where the zips are listed).
-  (async () => {
-    try {
-      const r = await fetch('https://api.github.com/repos/olik0495/lumen/releases/latest', { headers: { Accept: 'application/vnd.github+json' } });
-      if (!r.ok) return;
-      const rel = await r.json();
-      const version = String(rel.tag_name || '').replace(/^v/, '');
-      const find = re => (rel.assets || []).find(a => re.test(a.name));
-      const zips = { browser: find(/^Lumen-Browser-[\d.]+\.zip$/), plain: find(/^Lumen-[\d.]+\.zip$/) };
-      document.querySelectorAll('[data-dl]').forEach(a => { const z = zips[a.dataset.dl]; if (z) a.href = z.browser_download_url; });
-      if (version) {
-        document.getElementById('ver').textContent = 'Version ' + version;
-        document.getElementById('footVer').textContent = version;
-        document.getElementById('dlLabel').textContent = 'Download Lumen ' + version;
-      }
-      if (zips.browser) document.getElementById('dlSize').textContent = `${Math.round(zips.browser.size / 1048576)} MB`;
-      // What's new: the list at the top of the release notes.
-      const notes = String(rel.body || '').split(/\r?\n/).filter(l => /^\s*[-*] /.test(l)).map(l => l.replace(/^\s*[-*] /, '').replace(/\*\*/g, ''));
-      if (notes.length) {
-        document.getElementById('whatsNewTitle').textContent = `What's new in ${version}`;
-        const ul = document.getElementById('whatsNewList');
-        notes.slice(0, 6).forEach(n => { const li = document.createElement('li'); li.textContent = n; ul.append(li); });
-        document.getElementById('whatsNew').style.display = 'block';
-      }
-    } catch { /* offline or GitHub busy: the buttons still lead to the downloads */ }
-  })();
-</script>
+<script src="site.js"></script>
 </body>
 </html>

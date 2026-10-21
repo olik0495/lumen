@@ -15,12 +15,17 @@
     Write-Host ''
     Say 'Lumen installer' 'Magenta'
     $dir = Join-Path $env:LOCALAPPDATA 'Programs\Lumen'
-    $test = [bool]$env:LUMEN_TEST_DIR # (testing: install there, without shortcuts, Settings entry or starting Lumen)
+    # Testing only, and only when switched on on purpose (LUMEN_INSTALLER_TEST=1): LUMEN_TEST_DIR installs there,
+    # without shortcuts, Settings entry or starting Lumen; LUMEN_ZIP installs a local zip. Without the switch,
+    # leftover settings like these are ignored and Lumen always comes from GitHub, checked.
+    $testing = $env:LUMEN_INSTALLER_TEST -eq '1'
+    $test = $testing -and [bool]$env:LUMEN_TEST_DIR
     if ($test) { $dir = $env:LUMEN_TEST_DIR }
+    $localZip = $testing -and [bool]$env:LUMEN_ZIP
     $plain = $env:LUMEN_EDITION -eq 'plain'
 
-    # 1. The newest version (a local zip can be given for testing with LUMEN_ZIP).
-    if ($env:LUMEN_ZIP) {
+    # 1. The newest version.
+    if ($localZip) {
       $zipSource = $env:LUMEN_ZIP; $version = 'local'; $digest = ''
     } else {
       Say 'Looking for the newest version...'
@@ -29,6 +34,9 @@
       if ($plain) { $pattern = '^Lumen-[\d.]+\.zip$' }
       $asset = $rel.assets | Where-Object { $_.name -match $pattern } | Select-Object -First 1
       if (-not $asset) { throw 'The Lumen download could not be found. Please try again later.' }
+      # (only from Lumen's own releases, and a sensible size)
+      if (-not ([string]$asset.browser_download_url).StartsWith('https://github.com/olik0495/lumen/releases/download/', 'Ordinal')) { throw 'The Lumen download is not where it should be. Please try again later.' }
+      if ($asset.size -lt 10MB -or $asset.size -gt 1GB) { throw 'The Lumen download does not look right. Please try again later.' }
       $version = $rel.tag_name -replace '^v', ''
       $digest = [string]$asset.digest
     }
@@ -37,7 +45,7 @@
     $tmp = Join-Path $env:TEMP ('lumen-install-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
     New-Item -ItemType Directory -Path $tmp | Out-Null
     $zip = Join-Path $tmp 'lumen.zip'
-    if ($env:LUMEN_ZIP) { Copy-Item $zipSource $zip }
+    if ($localZip) { Copy-Item $zipSource $zip }
     else {
       Say ("Downloading Lumen $version (" + [math]::Round($asset.size / 1MB) + ' MB)...')
       Invoke-WebRequest $asset.browser_download_url -OutFile $zip -UseBasicParsing
